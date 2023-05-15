@@ -1,0 +1,189 @@
+{
+	"info": {
+		"_postman_id": "40aa56c2-eec8-4e98-a43a-af0b04913ef4",
+		"name": "BeonExercise",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "16202919",
+		"_collection_link": "https://astrella-dev.postman.co/workspace/Team-Workspace~b2990867-1864-4645-8b09-25c1a77926a1/collection/16202919-40aa56c2-eec8-4e98-a43a-af0b04913ef4?action=share&creator=16202919&source=collection_link"
+	},
+	"item": [
+		{
+			"name": "GetUsersList",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('is an Array', () => pm.expect(pm.response.json().data).to.be.an('array').but.not.an('object'))",
+							"",
+							"//Test unique id",
+							"const response = pm.response.json().data; // parse straight to the array",
+							"",
+							"let IDs = response.map(obj => obj.id); // create a new flat array of just the IDs",
+							"",
+							"function hasDuplicates(array) {",
+							"    return (new Set(array)).size !== array.length;",
+							"}",
+							"",
+							"pm.test(\"Check IDs are unique\", () => {",
+							"    pm.expect(hasDuplicates(IDs)).to.equal(false);",
+							"    // or pm.expect(hasDuplicates(IDs)).to.be.false;",
+							"});",
+							"",
+							"//Test unique email",
+							"let emails = response.map(obj => obj.email); // create a new flat array of just the IDs",
+							"",
+							"pm.test(\"Check emails are unique\", () => {",
+							"    pm.expect(hasDuplicates(emails)).to.equal(false);",
+							"    // or pm.expect(hasDuplicates(IDs)).to.be.false;",
+							"});",
+							"",
+							"//Test unique first name",
+							"let first_names = response.map(obj => obj.first_name); // create a new flat array of just the IDs",
+							"",
+							"pm.test(\"Check emails are unique\", () => {",
+							"    pm.expect(hasDuplicates(first_names)).to.equal(false);",
+							"    // or pm.expect(hasDuplicates(IDs)).to.be.false;",
+							"});",
+							"",
+							"//Test unique lastname",
+							"let last_names = response.map(obj => obj.last_name); // create a new flat array of just the IDs",
+							"",
+							"pm.test(\"Check emails are unique\", () => {",
+							"    pm.expect(hasDuplicates(last_names)).to.equal(false);",
+							"    // or pm.expect(hasDuplicates(IDs)).to.be.false;",
+							"});",
+							"",
+							"// extract an id and store it as a variable",
+							"var jsonData = JSON.parse(responseBody);",
+							"console.log(jsonData.data[0].id)",
+							"postman.setEnvironmentVariable(\"id\", jsonData.data[0].id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://reqres.in/api/users",
+					"protocol": "https",
+					"host": [
+						"reqres",
+						"in"
+					],
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateNewUser",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"  pm.response.to.have.status(201);",
+							"});",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"var email = jsonData.email",
+							"var first_name = jsonData.first_name",
+							"var last_name = jsonData.last_name",
+							"console.log(email)",
+							"console.log(last_name)",
+							"console.log(first_name)",
+							"",
+							"pm.test(\"New user information is correct\", function () {",
+							"    pm.expect(email).to.equal(\"jose@tst.com\")",
+							"    pm.expect(last_name).to.equal(\"M\")",
+							"    pm.expect(first_name).to.equal(\"Jose\")",
+							"",
+							"",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"first_name\": \"Jose\",\n    \"last_name\": \"M\",\n    \"email\": \"jose@tst.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://reqres.in/api/users",
+					"protocol": "https",
+					"host": [
+						"reqres",
+						"in"
+					],
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetUserInfo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"var email = jsonData.data.email",
+							"console.log(email)",
+							"",
+							"pm.test(\"Email should be correct\", function () {",
+							"    pm.expect(email).to.equal(\"george.bluth@reqres.in\")",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://reqres.in/api/users/{{id}}",
+					"protocol": "https",
+					"host": [
+						"reqres",
+						"in"
+					],
+					"path": [
+						"api",
+						"users",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
